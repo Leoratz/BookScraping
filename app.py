@@ -1,0 +1,67 @@
+from bs4 import BeautifulSoup
+import requests
+import csv
+import os
+import pathlib
+
+url = "https://books.toscrape.com/"
+response = requests.get(url)
+soup = BeautifulSoup(response.content, 'html.parser')
+
+path = pathlib.Path(__file__).parent.absolute()
+os.makedirs(path / 'csv', exist_ok=True)
+
+csv_file_path = path / 'csv' / 'books.csv'
+with open(csv_file_path, 'w', newline='', encoding='utf-8') as csvfile:
+    writer = csv.writer(csvfile)
+    writer.writerow(['product_page_url', 'universal_product_code ', 'title', 'price_including_tax', 'price_excluding_tax', 'number_available', 'product_description', 'category', 'review_rating', 'image_url'])
+
+    books = soup.find_all('div', class_='image_container')
+
+    ### Product page URL ####
+    link = books[0].find('a')['href']
+    book_url = url + link
+
+    sub_response = requests.get(book_url)
+    sub_soup = BeautifulSoup(sub_response.content, 'html.parser')
+
+    ### UPC ####
+    upc = sub_soup.find_all('td')[0].text
+
+    #### Title ####
+    title = sub_soup.find('h1').text
+
+    #### PIT ####
+    pit = sub_soup.find_all('td')[3].text.replace('Â', '')
+
+    #### PET ####
+    pet = sub_soup.find_all('td')[2].text.replace('Â', '')
+
+    #### NA ####
+    div = soup.find('div', class_="product_price")
+
+    if "In stock" in div.find_all('p')[1].text:
+        na = sub_soup.find_all('td')[5].text
+    else:
+        na = "Out of stock"
+
+    #### PD ####
+    pd = sub_soup.find('article', class_="product_page")
+    description = pd.find_all('p')[3].text.replace(',', '')
+
+    #### Category ####
+    categories = sub_soup.find('ul', class_="breadcrumb")
+    category = sub_soup.find_all('a')[3].text
+
+    #### Rating ####
+    stars = sub_soup.find('p', class_="star-rating")['class'][1]
+
+    #### Image URL ####
+    image = sub_soup.find('div', class_="item active")
+    image_url = image.find('img')['src'].replace('../../', '')
+    image_url = url + image_url
+
+    writer.writerow([book_url, upc, title, pit, pet, na, description, category, stars, image_url])
+
+
+
