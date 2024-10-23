@@ -10,18 +10,24 @@ url = "https://books.toscrape.com/"
 response = requests.get(url)
 soup = BeautifulSoup(response.content, 'html.parser')
 
-### Links and paths ###
+### Paths ###
 path = pathlib.Path(__file__).parent.absolute()
-
 os.makedirs(path / 'csv', exist_ok=True)
-csv_file_path = path / 'csv' / 'books.csv'
-
 os.makedirs(path / 'images', exist_ok=True)
-image_path = path / 'images'
 
 ### Functions ###
 
 def oneBook(book_url):
+    """
+    Extract all informations about one book
+
+    Args:
+        book_url (str): URL of the book
+
+    Returns:
+        list: List of all informations about the book
+    """
+
     sub_response = requests.get(book_url)
     sub_soup = BeautifulSoup(sub_response.content, 'html.parser')
 
@@ -61,21 +67,23 @@ def oneBook(book_url):
     image_url = image.find('img')['src'].replace('../../', '')
     image_url = url + image_url
 
-    try:
-        getImage(image_url, title)
-    except OSError or FileNotFoundError:
-        book_title = title.replace(':', ' ').replace('/', ' ')
-        getImage(image_url, book_title)
+    getImage(image_url, title, category)
     
-
     return [book_url, upc, title, pit, pet, na, description, category, stars, image_url]
 
-def getBooks(category_url):
+def getBooks(category_url, writer):
+    """
+    Extract all books from a category
+
+    Args:
+        category_url (str): URL of the category
+        writer (csv.writer): CSV writer
+    
+    Returns:
+        None
+    """
     sub2_response = requests.get(category_url)
     sub2_soup = BeautifulSoup(sub2_response.content, 'html.parser')
-
-    category = categories[20].find('a')['href']
-    category_url = url + category
 
     books = sub2_soup.find_all('div', class_='image_container')
     for book in books:
@@ -88,27 +96,54 @@ def getBooks(category_url):
     if next:
         next_url = category_url + next.find('a')['href']
         pages_url = next_url.replace('index.html', '')
-        getBooks(pages_url)
+        getBooks(pages_url, writer)
 
-def getImage(book_url, title):
+def getImage(book_url, title, category):
+    """
+    Get the image of a book
+
+    Args:
+        book_url (str): URL of the book
+        title (str): Title of the book
+        category (str): Category of the book
+
+    Returns:
+        None
+    """
+
+    valid_title = re.sub(r'[<>:"/\\|?*]', '_', title)
+
+    category_path = path / 'images' / category
+    os.makedirs(category_path, exist_ok=True)
+
     image = requests.get(book_url)
-    with open(image_path / {f'{title}.jpg'}, 'wb') as file:
+    with open(category_path / f'{valid_title}.jpg', 'wb') as file:
         file.write(image.content)
 
 
-with open(csv_file_path, 'w', newline='', encoding='utf-8') as csvfile:
-    writer = csv.writer(csvfile)
-    writer.writerow(['product_page_url', 'universal_product_code ', 'title', 'price_including_tax', 'price_excluding_tax', 'number_available', 'product_description', 'category', 'review_rating', 'image_url'])
+def getAllBooks():
+    """
+    Extract all books from the website
 
-    books = soup.find_all('div', class_='image_container')
-    categories = soup.find_all('li')
+    Args:
+        None
+    
+    Returns:
+        None
+    """
 
-    ### Product page URL ###
-    link = books[0].find('a')['href']
-    book_url = url + link
+    categories = soup.find('ul', class_='nav nav-list').find('ul').find_all('li')
+    
+    for category in categories:
+        category_name = category.find('a').text.strip()
+        category_url = url + category.find('a')['href']
+        print(category_url)
 
-    ### Category URL ### 
-    category = categories[20].find('a')['href']
-    category_url = url + category
+        csv_file_path = path / 'csv' / f'{category_name}.csv'
+        with open(csv_file_path, 'w', newline='', encoding='utf-8') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(['product_page_url', 'universal_product_code', 'title', 'price_including_tax', 'price_excluding_tax', 'number_available', 'product_description', 'category', 'review_rating', 'image_url'])
+            getBooks(category_url, writer)
 
-    getBooks(category_url)
+### Main Execution ###
+getAllBooks()
