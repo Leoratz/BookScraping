@@ -92,7 +92,7 @@ def getBooks(category_url):
 
 def getImage(book_url, title):
     image = requests.get(book_url)
-    with open(image_path / {f'{title}.jpg'}, 'wb') as file:
+    with open(image_path / f'{title}.jpg', 'wb') as file:
         file.write(image.content)
 
 
