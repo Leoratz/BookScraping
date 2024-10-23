@@ -5,13 +5,21 @@ import os
 import pathlib
 import re
 
+### Site URL ###
 url = "https://books.toscrape.com/"
 response = requests.get(url)
 soup = BeautifulSoup(response.content, 'html.parser')
 
+### Links and paths ###
 path = pathlib.Path(__file__).parent.absolute()
+
 os.makedirs(path / 'csv', exist_ok=True)
 csv_file_path = path / 'csv' / 'books.csv'
+
+os.makedirs(path / 'images', exist_ok=True)
+image_path = path / 'images'
+
+### Functions ###
 
 def oneBook(book_url):
     sub_response = requests.get(book_url)
@@ -53,6 +61,13 @@ def oneBook(book_url):
     image_url = image.find('img')['src'].replace('../../', '')
     image_url = url + image_url
 
+    try:
+        getImage(image_url, title)
+    except OSError or FileNotFoundError:
+        book_title = title.replace(':', ' ').replace('/', ' ')
+        getImage(image_url, book_title)
+    
+
     return [book_url, upc, title, pit, pet, na, description, category, stars, image_url]
 
 def getBooks(category_url):
@@ -75,8 +90,10 @@ def getBooks(category_url):
         pages_url = next_url.replace('index.html', '')
         getBooks(pages_url)
 
-    
-
+def getImage(book_url, title):
+    image = requests.get(book_url)
+    with open(image_path / {f'{title}.jpg'}, 'wb') as file:
+        file.write(image.content)
 
 
 with open(csv_file_path, 'w', newline='', encoding='utf-8') as csvfile:
