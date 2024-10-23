@@ -3,6 +3,7 @@ import requests
 import csv
 import os
 import pathlib
+import re
 
 url = "https://books.toscrape.com/"
 response = requests.get(url)
@@ -10,18 +11,9 @@ soup = BeautifulSoup(response.content, 'html.parser')
 
 path = pathlib.Path(__file__).parent.absolute()
 os.makedirs(path / 'csv', exist_ok=True)
-
 csv_file_path = path / 'csv' / 'books.csv'
-with open(csv_file_path, 'w', newline='', encoding='utf-8') as csvfile:
-    writer = csv.writer(csvfile)
-    writer.writerow(['product_page_url', 'universal_product_code ', 'title', 'price_including_tax', 'price_excluding_tax', 'number_available', 'product_description', 'category', 'review_rating', 'image_url'])
 
-    books = soup.find_all('div', class_='image_container')
-
-    ### Product page URL ####
-    link = books[0].find('a')['href']
-    book_url = url + link
-
+def oneBook(book_url):
     sub_response = requests.get(book_url)
     sub_soup = BeautifulSoup(sub_response.content, 'html.parser')
 
@@ -41,7 +33,7 @@ with open(csv_file_path, 'w', newline='', encoding='utf-8') as csvfile:
     div = soup.find('div', class_="product_price")
 
     if "In stock" in div.find_all('p')[1].text:
-        na = sub_soup.find_all('td')[5].text
+        na = re.findall(r'\d+', sub_soup.find_all('td')[5].text)[0]
     else:
         na = "Out of stock"
 
@@ -61,7 +53,45 @@ with open(csv_file_path, 'w', newline='', encoding='utf-8') as csvfile:
     image_url = image.find('img')['src'].replace('../../', '')
     image_url = url + image_url
 
-    writer.writerow([book_url, upc, title, pit, pet, na, description, category, stars, image_url])
+    return [book_url, upc, title, pit, pet, na, description, category, stars, image_url]
+
+def getBooks(category_url):
+    sub2_response = requests.get(category_url)
+    sub2_soup = BeautifulSoup(sub2_response.content, 'html.parser')
+
+    category = categories[20].find('a')['href']
+    category_url = url + category
+
+    books = sub2_soup.find_all('div', class_='image_container')
+    for book in books:
+        link = book.find('a')['href'].replace('../../../', 'catalogue/')
+        book_url = url + link
+        writer.writerow(oneBook(book_url))
+
+    ### Exception for multiple pages ###
+    next = sub2_soup.find('li', class_='next')
+    if next:
+        next_url = category_url + next.find('a')['href']
+        pages_url = next_url.replace('index.html', '')
+        getBooks(pages_url)
+
+    
 
 
 
+with open(csv_file_path, 'w', newline='', encoding='utf-8') as csvfile:
+    writer = csv.writer(csvfile)
+    writer.writerow(['product_page_url', 'universal_product_code ', 'title', 'price_including_tax', 'price_excluding_tax', 'number_available', 'product_description', 'category', 'review_rating', 'image_url'])
+
+    books = soup.find_all('div', class_='image_container')
+    categories = soup.find_all('li')
+
+    ### Product page URL ###
+    link = books[0].find('a')['href']
+    book_url = url + link
+
+    ### Category URL ### 
+    category = categories[20].find('a')['href']
+    category_url = url + category
+
+    getBooks(category_url)
