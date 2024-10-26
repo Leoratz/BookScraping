@@ -82,21 +82,25 @@ def getBooks(category_url, writer):
     Returns:
         None
     """
-    sub2_response = requests.get(category_url)
-    sub2_soup = BeautifulSoup(sub2_response.content, 'html.parser')
 
-    books = sub2_soup.find_all('div', class_='image_container')
-    for book in books:
-        link = book.find('a')['href'].replace('../../../', 'catalogue/')
-        book_url = url + link
-        writer.writerow(oneBook(book_url))
+    while category_url:
+        sub2_response = requests.get(category_url)
+        sub2_soup = BeautifulSoup(sub2_response.content, 'html.parser')
 
-    ### Exception for multiple pages ###
-    next = sub2_soup.find('li', class_='next')
-    if next:
-        next_url = category_url + next.find('a')['href']
-        pages_url = next_url.replace('index.html', '')
-        getBooks(pages_url, writer)
+        books = sub2_soup.find_all('div', class_='image_container')
+        for book in books:
+            link = book.find('a')['href'].replace('../../../', 'catalogue/')
+            book_url = url + link
+            writer.writerow(oneBook(book_url))
+
+        ### Exception for multiple pages ###
+        next = sub2_soup.find('li', class_='next')
+        if next:
+            next_url = next.find('a')['href']
+            category_url = category_url.rsplit('/', 1)[0] + '/' + next_url
+            print(category_url)
+        else:
+            category_url = None
 
 def getImage(book_url, title, category):
     """
