@@ -1,6 +1,6 @@
 # 📚 Bibliopolis - Système de Surveillance des Prix des Livres d'Occasion
 
-Ce projet propose un système de surveillance des prix pour le site OldBooks Finder, réalisé pour le compte de la boutique Bibliopolis, spécialisée dans la vente de livres rares et d'occasion.
+Ce projet propose un système fictif de surveillance des prix pour le site d'entraînement OldBooks Finder, réalisé dans le cadre d'un exercice de scraping pour la boutique imaginaire Bibliopolis, spécialisée dans la vente de livres rares et d'occasion.
 
 ## 📋 Description du projet
 <p>
