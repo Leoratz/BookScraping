@@ -76,9 +76,9 @@ python .\charts.py
 * <strong>Titre</strong> : "Rapport des prix des livres d'occasion"
 * <strong>Graphiques</strong> : Diagramme circulaire et graphique en barres
 * <strong>Statistiques clés</strong> :
-⋅⋅⋅Prix moyen global des livres⋅⋅⋅
-⋅⋅⋅Catégorie la plus représentée⋅⋅⋅
-⋅⋅⋅Catégorie avec le prix moyen le plus élevé⋅⋅⋅
+* Prix moyen global des livres
+* Catégorie la plus représentée
+* Catégorie avec le prix moyen le plus élevé
 * <strong>Description</strong> : Brèves explications accompagnant chaque graphique
 
 <hr>
