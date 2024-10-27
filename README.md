@@ -26,8 +26,8 @@ Assurez-vous d’avoir Python 3.x et Git installés sur votre système.
 ### Cloner le dépôt :
 
 ````bash
-git clone https://github.com/votre-utilisateur/votre-repo.git
-cd votre-repo
+git clone https://github.com/Leoratz/BookScraping.git
+cd BookScraping
 ````
 </p>
 
