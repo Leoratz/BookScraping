@@ -53,7 +53,6 @@ Dans le dossier racine du projet, exécutez :
 ````bash
 python .\app.py
 ````
-
 2. <strong>Phase 5-6 :</strong> Générer un rapport PDF final avec les graphiques et les informations principales.
 
 ````bash
