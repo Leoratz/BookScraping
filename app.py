@@ -19,7 +19,7 @@ os.makedirs(path / 'images', exist_ok=True)
 
 def oneBook(book_url):
     """
-    Extract all informations about one book
+    Extract all informations about one book.
 
     Args:
         book_url (str): URL of the book
@@ -73,7 +73,7 @@ def oneBook(book_url):
 
 def getBooks(category_url, writer):
     """
-    Extract all books from a category
+    Extract all books from a category.
 
     Args:
         category_url (str): URL of the category
@@ -98,13 +98,12 @@ def getBooks(category_url, writer):
         if next:
             next_url = next.find('a')['href']
             category_url = category_url.rsplit('/', 1)[0] + '/' + next_url
-            print(category_url)
         else:
             category_url = None
 
 def getImage(book_url, title, category):
     """
-    Get the image of a book
+    Get the image of a book.
 
     Args:
         book_url (str): URL of the book
@@ -127,7 +126,7 @@ def getImage(book_url, title, category):
 
 def getAllBooks():
     """
-    Extract all books from the website
+    Extract all books from the website.
 
     Args:
         None
@@ -141,7 +140,6 @@ def getAllBooks():
     for category in categories:
         category_name = category.find('a').text.strip()
         category_url = url + category.find('a')['href']
-        print(category_url)
 
         csv_file_path = path / 'csv' / f'{category_name}.csv'
         with open(csv_file_path, 'w', newline='', encoding='utf-8') as csvfile:
