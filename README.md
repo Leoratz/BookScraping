@@ -48,13 +48,13 @@ Dans le dossier racine du projet, exécutez :
 ## 🚀 Utilisation
 
 <p>Les étapes 1 à 4 sont éxecutées en même temps. La visualisation des données se fait séparement.</p>
-* 1. <strong>Phase 1-4 :</strong> Extraire les informations de toutes les catégories de livres et les stocker.
+1. <strong>Phase 1-4 :</strong> Extraire les informations de toutes les catégories de livres et les stocker.
 
 ````bash
 python .\app.py
 ````
 
-* 2. <strong>Phase 5-6 :</strong> Générer un rapport PDF final avec les graphiques et les informations principales.
+2. <strong>Phase 5-6 :</strong> Générer un rapport PDF final avec les graphiques et les informations principales.
 
 ````bash
 python .\charts.py
