@@ -48,14 +48,51 @@ Dans le dossier racine du projet, exécutez :
 ## 🚀 Utilisation
 
 <p>Les étapes 1 à 4 sont éxecutées en même temps. La visualisation des données se fait séparement.</p>
-1. Phase 1-4 : Extraire les informations de toutes les catégories de livres et les stocker.
+⋅⋅*1. <strong>Phase 1-4 :</strong> Extraire les informations de toutes les catégories de livres et les stocker.
 
 ````bash
 python .\app.py
 ````
 
-2.Phase 5-6 : Générer un rapport PDF final avec les graphiques et les informations principales.
+⋅⋅*2. <strong>Phase 5-6 :</strong> Générer un rapport PDF final avec les graphiques et les informations principales.
 
 ````bash
 python .\charts.py
 ````
+<hr>
+
+### 📊 Visualisations
+
+<p>Les graphiques suivants sont générés avec <strong>ReportLab</strong> et intégrés au PDF final :</p>
+
+⋅⋅*1. <strong>Diagramme circulaire :</strong> Répartition des livres par catégorie.
+⋅⋅*2. <strong>Graphique en barres :</strong> Prix moyen des livres par catégorie.
+
+<hr>
+
+### 📝 Rapport PDF
+<p>Le rapport PDF (rapport_prix_livres.pdf) contient :</p>
+
+* <strong>Titre</strong> : "Rapport des prix des livres d'occasion"
+* <strong>Graphiques</strong> : Diagramme circulaire et graphique en barres
+* <strong>Statistiques clés</strong> :
+⋅⋅*Prix moyen global des livres
+⋅⋅*Catégorie la plus représentée
+⋅⋅*Catégorie avec le prix moyen le plus élevé
+* <strong>Description</strong> : Brèves explications accompagnant chaque graphique
+
+<hr>
+
+### 📂 Organisation du code
+
+* ````requirements.txt```` : Fichier listant les dépendances du projet
+* ````app.py```` : Script pour extraire les données de chaques livres de toutes les catégories
+* ````charts.py```` : Script pour générer les graphiques et le rapport PDF avec ReportLab
+
+<hr>
+
+### 📧 Contact
+
+<p>Si vous avez des questions, n’hésitez pas à me contacter via leora@chriqui.name.</p>
+
+<hr>
